@@ -1,0 +1,7 @@
+# Make a controller
+# Generates controller, new.html.erb, rspec, & helper
+rails generate controller Users new
+
+# Make a model
+# Generates model, migration script, &rspec
+rails generate model User name:string email:string
