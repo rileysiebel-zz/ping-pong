@@ -5,3 +5,6 @@ rails generate controller Users new
 # Make a model
 # Generates model, migration script, &rspec
 rails generate model User name:string email:string
+
+# Integration tests
+rails generate integration_test users
