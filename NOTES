@@ -8,3 +8,6 @@ rails generate model User name:string email:string
 
 # Integration tests
 rails generate integration_test users
+
+# Add attribute to model at db level
+rails generate migration add_admin_to_users admin:boolean
