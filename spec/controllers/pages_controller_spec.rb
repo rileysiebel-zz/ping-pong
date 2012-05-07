@@ -42,4 +42,4 @@ describe PagesController do
         :content => @base_title +" | About")
     end
   end
-end
+end 

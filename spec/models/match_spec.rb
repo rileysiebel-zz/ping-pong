@@ -6,7 +6,7 @@ describe Match do
     @user_one = FactoryGirl.create(:user)
     @user_two = FactoryGirl.create(:user, email: "another@example.com")
     @attr = { user_one_score: 17, user_two_score: 21, 
-              user_two_id: @user_two.id }
+              away_player: @user_two.id }
   end
   
   it "should create a new instance given valid attributes" do
