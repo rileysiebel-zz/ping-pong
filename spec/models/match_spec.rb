@@ -5,8 +5,7 @@ describe Match do
   before(:each) do
     @user_one = FactoryGirl.create(:user)
     @user_two = FactoryGirl.create(:user, email: "another@example.com")
-    @attr = { user_one_score: 17, user_two_score: 21, 
-              away_player: @user_two.id }
+    @attr = { challenger_score: 17, defender_score: 21 }
   end
   
   it "should create a new instance given valid attributes" do
