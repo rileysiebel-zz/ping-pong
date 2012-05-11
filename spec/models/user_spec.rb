@@ -163,16 +163,29 @@ describe User do
     before(:each) do
       @user = User.create(@attr)
       @match1 = FactoryGirl.create(:match, defender: @user, created_at: 1.day.ago)
-      @match2 = FactoryGirl.create(:match, defender: @user, created_at: 1.hour.ago)
+      @match2 = FactoryGirl.create(:match, defender: @user, created_at: 2.hour.ago)
+      @match3 = FactoryGirl.create(:match, challenger: @user, created_at: 1.hour.ago)
     end
   
-    it "should have a defender matches attribute" do
+    it "should have a defender_matches attribute" do
       @user.should respond_to(:defender_matches)
     end
     
-    it "should have the right matches in the right order" do
+    it "should have a challenger_matches attribute" do
+      @user.should respond_to(:challenger_matches)
+    end
+    
+    it "should have a matches attribute" do
+      @user.should respond_to(:matches)
+    end
+    
+    it "should have the right defender matches in the right order" do
       @user.defender_matches.should == [@match2, @match1]
     end
+    
+    it "should have the right matches in the right order" do
+      @user.matches.should == [@match3, @match2, @match1]
+    end 
     
     it "should destroy associated matches" do
       @user.destroy

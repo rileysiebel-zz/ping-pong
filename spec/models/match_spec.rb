@@ -70,21 +70,38 @@ describe Match do
  
   describe "validation" do
   
-    it "should require a challenger id" 
+    it "should require a challenger id" do
+      Match.new(@attr.merge(defender: @user_one)).should_not be_valid
+    end
         
-    it "should require a defender id" 
+    it "should require a defender id" do
+      Match.new(@attr.merge(challenger: @user_one)).should_not be_valid
+    end
        
-    it "should require a challenger score" 
+    it "should require a challenger score" do
+      @my_attr = {defender_score: 21, defender: @user_one, challenger: @user_two} 
+      Match.new(@my_attr).should_not be_valid
+    end
     
-    it "should require a defender score" 
-  
+    it "should require a defender score" do
+      @my_attr = {challenger_score: 21, defender: @user_one, challenger: @user_two}
+      Match.new(@my_attr).should_not be_valid
+    end
+    
+    # PENDING (NEED TO KNOW MORE ABOUT VALIDATION)    
     describe "score" do
+    
+      before(:each) do
+        @attr = {challenger: @user_one, defender: @user_two}
+      end
     
       it "should require one score of 21 or greater"
       
       describe "greater than 21" do
         
-        it "should have scores with difference exactly 2"
+        it "should require the difference to be exactly 2"
+        
+        it "should reject if the difference is not 2"
         
       end
     
