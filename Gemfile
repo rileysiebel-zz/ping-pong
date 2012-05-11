@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 gem 'rails'
 
@@ -11,8 +11,8 @@ group :development do
   gem "rspec"
   gem "rspec-core"
   gem "rspec-expectations"
-	gem "annotate"
-	gem "faker"
+  gem "annotate"
+  gem "faker"
 end
 
 group :test do
@@ -23,4 +23,5 @@ group :test do
   gem "webrat"
   gem 'factory_girl_rails'
   gem 'spork'
+  gem 'autotest'
 end

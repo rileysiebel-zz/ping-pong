@@ -158,4 +158,29 @@ describe User do
     
   end
 
+  describe "match associations" do
+  
+    before(:each) do
+      @user = User.create(@attr)
+      @match1 = FactoryGirl.create(:match, defender: @user, created_at: 1.day.ago)
+      @match2 = FactoryGirl.create(:match, defender: @user, created_at: 1.hour.ago)
+    end
+  
+    it "should have a defender matches attribute" do
+      @user.should respond_to(:defender_matches)
+    end
+    
+    it "should have the right matches in the right order" do
+      @user.defender_matches.should == [@match2, @match1]
+    end
+    
+    it "should destroy associated matches" do
+      @user.destroy
+      [@match1, @match2].each do |match|
+        Match.find_by_id(match.id).should be_nil
+      end
+    end
+    
+  end
+
 end

@@ -2,7 +2,8 @@ class User < ActiveRecord::Base
   attr_accessor :password
   attr_accessible :email, :name, :password, :password_confirmation
   
-  has_many :matches
+  has_many :defender_matches,   class_name: 'Match', foreign_key: :defender_id,   dependent: :destroy
+  has_many :challenger_matches, class_name: 'Match', foreign_key: :challenger_id, dependent: :destroy
   
   # Validation
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
