@@ -16,5 +16,21 @@ namespace :db do
       User.create!({name: name, email: email, 
                     password: password, password_confirmation: password})
     end
+    User.all(limit: 6).each do |user|
+      25.times do
+        d_score = 1 + rand(21)
+        c_score = 1 + rand(21)
+        challenger = User.random
+        user.defender_matches.create!({ challenger: challenger, 
+          defender_score: d_score, challenger_score: c_score })
+      end
+      25.times do
+        d_score = 1 + rand(21)
+        c_score = 1 + rand(21)
+        defender = User.random
+        user.challenger_matches.create!({ defender: defender, 
+          defender_score: d_score, challenger_score: c_score })
+      end
+    end
   end
 end

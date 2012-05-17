@@ -1,10 +1,14 @@
 <tr>
 	<td>
 		<span class='content'>
-			<%= match.defender.name %> <%= match.defender_score %> - <%= match.challenger_score %> <%= match.challenger.name %>
-		</span>
+			<% if match.defender == user %>	
+				<strong><%= match.defender.name %> <%= match.defender_score %></strong> - <%= match.challenger_score %> <%= match.challenger.name %>
+			<% else %>
+			  <%= match.defender.name %> <%= match.defender_score %> - <strong><%= match.challenger_score %> <%= match.challenger.name %></strong>
+			<% end %>
+		</span> <br \>
 		<span class='timestamp'>
-			Posted <%= time_ago_in_words(match.created_at) %> ago.
+			Played <%= time_ago_in_words(match.created_at) %> ago.
 		</span>
 	</td>
 </tr>

@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   public
     def matches
-      @matches = :defender_matches + :challenger_matches
+      @matches = defender_matches + challenger_matches
       # show most recent first
       @matches.sort {|x, y| y.created_at <=> x.created_at } 
     end
@@ -38,6 +38,12 @@ class User < ActiveRecord::Base
     def self.authenticate_with_salt(id, cookie_salt)
       user = find_by_id(id)
       (user && user.salt == cookie_salt) ? user : nil
+    end
+    
+    def self.random
+      if (c = count) != 0
+        find(:first, offset: rand(c))
+      end
     end
   
   private

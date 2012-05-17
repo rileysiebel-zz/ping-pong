@@ -194,3 +194,58 @@ ul.users {
 .users li {
 	list-style: none;
 }
+
+h1.match {
+	margin-bottom: 0.3em;
+}
+
+table.matches {
+	margin-top: 1em;
+}
+
+table.matches tr {
+	height: 70px;
+}
+
+table.matches tr td.gravatar {
+	border-top: 1px solid #ccc;
+	vertical-align: top;
+	width: 50px;
+}
+
+table.matches tr td.match {
+	border-top: 1px solid #ccc;
+	vertical-align: top;
+	padding-top: 10px;
+}
+
+table.matches tr td.match span.timestamp {
+	display: block;
+	font-size: 85%;
+	color: #666;
+}
+
+div.user_info img {
+	padding-right: 0.1em;
+}
+
+div.user_info a {
+	text-decoration: none;
+}
+
+div.user_info span.user_name {
+	position: absolute;
+}
+
+div.user_info span.matches {
+	font-size: 80%;
+}
+
+form.new_match {
+	margin-bottom: 2em;
+}
+
+form.new_match textarea {
+	height: 4em;
+	margin-bottom: 0;
+}

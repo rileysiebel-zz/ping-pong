@@ -94,12 +94,10 @@ describe UsersController do
     it "should show the user's matches" do
       @user2 = FactoryGirl.create(:user)
       match1 = FactoryGirl.create(:match, defender: @user, challenger: @user2)
-      match2 = FactoryGirl.create(:match, defender: @user, challenger: @user2)
       get :show, id: @user
       # TODO need to expand this
       response.should have_selector("span.content", 
         content: "#{@user.name} #{match1.defender_score} - #{match1.challenger_score} #{@user2.name}")
-      # response.should have_selector("span.content", for 2nd match)
     end
   
   end
