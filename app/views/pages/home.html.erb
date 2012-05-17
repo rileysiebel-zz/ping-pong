@@ -1,4 +1,20 @@
-<h1>Investor</h1>
-<p>This is the home page for the Investor application by Riley Siebel</p>
+<% if signed_in? %>
+	<table class='front' summary='For signed-in users'>
+		<tr>
+			<td class='main'> 
+				<h1 class='match'>What's Up? (Change This)</h1>
+				<%= render shared/match_form %>
+			</td>
+			<td class='sidebar round'>
+				<%= render 'shared/user_info'%>
+			</td>
+		</tr>
+	</table>
+<% else %>
+	<h1>Ping Pong</h1>
+	<p>
+		This is the homepage for the C3 Ping Pong Applications
+	</p>
 
 <%= link_to "Sign up now!", '#', :class => "signup_button round" %>
+<% end %>

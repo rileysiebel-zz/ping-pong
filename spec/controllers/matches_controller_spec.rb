@@ -43,7 +43,7 @@ describe MatchesController do
     
       before(:each) do
         @user_2 = FactoryGirl.create(:user)
-        @attr = @attr.merge({ challenger: @user_2 })
+        @attr = @attr.merge({ challenger_id: @user_2.id })
       end
       
       it "should create a match" do
