@@ -1,0 +1,7 @@
+<% unless @matches.empty? %>
+	<table class="matches" summary="User matches">
+		<!-- TODO Make this better, maybe just render the match -->
+		<%= render @matches %>
+	</table>
+	<%= will_paginate @matches %>
+<% end %>

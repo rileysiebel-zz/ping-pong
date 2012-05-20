@@ -1,2 +1,10 @@
+Make defender & challenger write-on-create-only
 User page should show matches
 Should be a matches page to show all the matches
+Finish encrypt method (on user? or session_helper)
+Make feed better (show followed users maybe?)
+Ability to destroy matches
+Integration tests for create/destroy matches (section 11.3.5)
+Have rankings page and rank users based on the matches they play
+Match score validation
+"it should show the user's matches" test should be expanded

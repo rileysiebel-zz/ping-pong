@@ -1,7 +1,18 @@
 <%= form_for @match do |f| %>
-	<%= render 'shared/error_messages', object: f.object %>
+	<%= render 'shared/error_messages', object: f.object%>
 	<div class='field'>
-		<%= f.text_area :content %>
+	</div>
+	<div class='field'>
+		<%= f.label :defender_score %><br />
+		<%= f.number_field :defender_score %>
+	</div>
+	<div class='field'>
+		<%= f.label :challenger %><br />
+		<%= f.collection_select :challenger, User.all.collect, :id, :name %>
+	</div>
+	<div class='field'>
+		<%= f.label :challenger_score %><br />
+		<%= f.number_field :challenger_score %>
 	</div>
 	<div class='actions'>
 		<%= f.submit "Submit" %>

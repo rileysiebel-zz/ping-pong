@@ -1,0 +1,14 @@
+<tr>
+	<td class="gravatar">
+		<%= link_to gravatar_for(feed_item.defender) %>
+	</td>
+	<td class="match">
+		<span class="user">
+		  <%= link_to feed_item.defender.name, feed_item.defender	%>
+		</span>
+		<span class="content"><%= feed_item.defender_score %></span>
+		<span class="timestamp">
+			Played <%= time_ago_in_words(feed_item.created_at) %> ago.
+		<span>
+	</td>
+<tr>

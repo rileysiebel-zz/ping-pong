@@ -7,6 +7,7 @@ class MatchesController < ApplicationController
       flash[:success] = "Match created!"
       redirect_to root_path
     else
+      @matches = []
       render "pages/home"
     end
   end

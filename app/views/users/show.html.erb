@@ -7,7 +7,7 @@
 			</h1>
 			<% unless @user.matches.empty? %>
 				<table>
-					<%= render @matches, user: @user %>
+					<%= render @matches %>
 				</table>
 				<%= will_paginate @matches %>
 			<% end %>

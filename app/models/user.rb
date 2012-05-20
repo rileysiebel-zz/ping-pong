@@ -20,9 +20,11 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   public
     def matches
-      @matches = defender_matches + challenger_matches
+      #@matches = defender_matches + challenger_matches
       # show most recent first
-      @matches.sort {|x, y| y.created_at <=> x.created_at } 
+      #@matches.sort {|x, y| y.created_at <=> x.created_at } 
+    
+      Match.where("defender_id == ? OR challenger_id == ?", id, id)
     end
     
     def has_password?(submitted_password)

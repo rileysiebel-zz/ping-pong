@@ -1,7 +1,7 @@
 <tr>
 	<td>
 		<span class='content'>
-			<% if match.defender == user %>	
+			<% if match.defender == current_user %>	
 				<strong><%= match.defender.name %> <%= match.defender_score %></strong> - <%= match.challenger_score %> <%= match.challenger.name %>
 			<% else %>
 			  <%= match.defender.name %> <%= match.defender_score %> - <strong><%= match.challenger_score %> <%= match.challenger.name %></strong>

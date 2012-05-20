@@ -192,6 +192,24 @@ describe User do
       [@match1, @match2].each do |match|
         Match.find_by_id(match.id).should be_nil
       end
+    
+    end
+    
+    describe "recent games" do
+
+      it "should have recent games" do
+        @user.should respond_to(:matches)
+      end
+      
+      it "should include the user's games" do
+        @user.matches.include?(@match1).should be_true
+      end
+      
+      it "should not include the other users' games" do
+        @match4 = FactoryGirl.create(:match, challenger: FactoryGirl.create(:user))
+        @user.matches.include?(@match4).should be_false
+      end
+
     end
     
   end
