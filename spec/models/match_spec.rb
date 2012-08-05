@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Match do
   
   before(:each) do
-    @user_one = FactoryGirl.create(:user)
+    @user_one = FactoryGirl.create(:user, email: "first@example.com")
     @user_two = FactoryGirl.create(:user, email: "another@example.com")
     @attr = { challenger_score: 17, defender_score: 21 }
   end
@@ -79,13 +79,18 @@ describe Match do
     end
        
     it "should require a challenger score" do
-      @my_attr = {defender_score: 21, defender: @user_one, challenger: @user_two} 
+      @my_attr = {defender_score: 21, defender: @user_one, challenger: @user_two}
       Match.new(@my_attr).should_not be_valid
     end
     
     it "should require a defender score" do
       @my_attr = {challenger_score: 21, defender: @user_one, challenger: @user_two}
       Match.new(@my_attr).should_not be_valid
+    end
+
+    it "should accept valid matches" do
+      @my_attr = {defender: @user_one, challenger: @user_two, defender_score: 21, challenger_score: 15}
+      Match.new(@attr.merge(@my_attr)).should be_valid
     end
     
     # PENDING (NEED TO KNOW MORE ABOUT VALIDATION)    
@@ -95,18 +100,63 @@ describe Match do
         @attr = {challenger: @user_one, defender: @user_two}
       end
     
-      it "should require one score of 21 or greater"
+      describe "standard" do
+        it "should require 1 score to be 21" do
+          @my_attr = {defender_score: 20, challenger_score: 15}
+          Match.new(@attr.merge(@my_attr)).should_not be_valid
+        end
+
+        it "should require only 1 score to be 21" do
+          @my_attr = {defender_score: 21, challenger_score: 21}
+          Match.new(@attr.merge(@my_attr)).should_not be_valid
+        end
+        it "should accept when defender score is 21" do
+          @my_attr = {defender_score: 21, challenger_score: 15}
+          Match.new(@attr.merge(@my_attr)).should be_valid
+        end
+        it "should accept when challenger score is 21" do
+          @my_attr = {defender_score: 15, challenger_score: 21}
+          Match.new(@attr.merge(@my_attr)).should be_valid
+        end
+      end
       
-      describe "greater than 21" do
+      describe "extra points" do
         
-        it "should require the difference to be exactly 2"
+        it "should require the difference to be greater than 2" do
+          @my_attr = {defender_score: 22, challenger_score: 21}
+          Match.new(@attr.merge(@my_attr)).should_not be_valid
+        end
         
-        it "should reject if the difference is not 2"
-        
+        it "should accept when challenger wins by 2" do
+          @my_attr = {defender_score: 20, challenger_score: 22}
+          Match.new(@attr.merge(@my_attr)).should be_valid
+        end
+
+        it "should accept when defender wins by 2" do
+          @my_attr = {defender_score: 22, challenger_score: 20}
+          Match.new(@attr.merge(@my_attr)).should be_valid
+        end
       end
     
     end
   
+  end
+
+  describe "power rankings" do
+    before :each do
+      @attr = {defender: @user_one, challenger: @user_two}
+    end
+
+    it "should respond to rerank" do
+      Match.should respond_to(:re_rank)
+    end
+
+    it "should call rerank when match is created" do
+      @my_attr = {defender_score: 23, challenger_score: 21}
+      match = Factory.build(:match)
+      match.should_receive(:after_save).once
+      match.save!
+    end
   end
   
 end

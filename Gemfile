@@ -13,6 +13,8 @@ group :development do
   gem "rspec-expectations"
   gem "annotate"
   gem "faker"
+  gem "pow"
+  gem "powify"
 end
 
 group :test do

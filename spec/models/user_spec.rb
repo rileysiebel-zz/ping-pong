@@ -214,4 +214,14 @@ describe User do
     
   end
 
+  describe "power rankings" do
+    before(:each) do
+      @user = User.create!(@attr)
+    end
+
+    it "should have power_ranking attribute" do
+      @user.should respond_to(:power_ranking  )
+    end
+  end
+
 end

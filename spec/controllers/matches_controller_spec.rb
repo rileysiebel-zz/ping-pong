@@ -21,7 +21,7 @@ describe MatchesController do
   
     before(:each) do
       @user = test_sign_in(FactoryGirl.create(:user))
-      @attr = {defender_score: 10, challenger_score: 15} 
+      @attr = {defender_score: 10, challenger_score: 21}
     end
     
     describe "failure" do
