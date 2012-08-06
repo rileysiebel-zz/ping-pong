@@ -19,8 +19,9 @@ FactoryGirl.define do
   end
   
   factory :match do
-    defender_score      18
-    challenger_score    21
+    c_score, d_score = Match.generate_valid_score
+    defender_score      d_score
+    challenger_score    c_score
     association :defender, factory: :user
     association :challenger, factory: :user
   end

@@ -22,6 +22,7 @@ group :test do
   gem "rspec"
   gem "rspec-core"
   gem "rspec-expectations"
+  gem "simplecov"
   gem "webrat"
   gem 'factory_girl_rails'
   gem 'spork'

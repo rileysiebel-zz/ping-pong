@@ -12,9 +12,13 @@ class Match < ActiveRecord::Base
   validates :defender_score,    presence: true
   validate  :reached_minimum_score
 
+  default_scope order: 'matches.created_at DESC'
+
   after_save :re_rank
 
-  default_scope order: 'matches.created_at DESC'
+  def re_rank
+    User.re_rank
+  end
 
   def reached_minimum_score
     def add_error
@@ -28,6 +32,22 @@ class Match < ActiveRecord::Base
     add_error unless challenger_score >= defender_score + 2 or defender_score >= challenger_score + 2
   end
 
-  def re_rank
+  def self.generate_valid_score
+  w_score = 21 + rand(21)
+  if w_score.equal?(21)
+    l_score = 1 + rand(19)
+  else
+    l_score = 20 + rand(w_score - 21)
   end
+
+  # assign scores randomly
+  if rand(2) == 1
+    c_score = w_score
+    d_score = l_score
+  else
+    c_score = l_score
+    d_score = w_score
+  end
+  return c_score, d_score
+end
 end

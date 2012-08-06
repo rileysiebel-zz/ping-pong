@@ -222,6 +222,78 @@ describe User do
     it "should have power_ranking attribute" do
       @user.should respond_to(:power_ranking  )
     end
-  end
 
+    describe "setup" do
+
+      it "players with no score should get a power ranking of 50" do
+        @users = []
+        10.times { @users.push FactoryGirl.create(:user, power_ranking: nil) }
+        User.re_rank
+        @users.each do |user|
+          User.find(user).power_ranking.should == 50
+        end
+      end
+
+      it "players with a score should not change their power ranking" do
+        @default_ranking = 100
+        @users = []
+        10.times do
+          @users.push FactoryGirl.create(:user, power_ranking: @default_ranking)
+        end
+        User.re_rank
+        @users.each do |user|
+          User.find(user).power_ranking.should == @default_ranking
+        end
+      end
+    end
+
+    describe "error calculation" do
+      it "should calculate error correctly for one match" do
+        @p1 = rand(100)
+        @p2 = rand(100)
+        @score1, @score2= Match.generate_valid_score
+        @user_one = FactoryGirl.create(:user, power_ranking: @p1)
+        @user_two = FactoryGirl.create(:user, power_ranking: @p2)
+        @match = Match.create(defender: @user_one, challenger: @user_two,
+                              defender_score: @score1, challenger_score: @score2)
+        @user_one.error_for_match(@match).should == (@p1 - @p2) - (@score1 - @score2)
+        @user_two.error_for_match(@match).should == (@p2 - @p1) - (@score2 - @score1)
+      end
+
+      it "should calculate error correctly for one challenger" do
+        @user = FactoryGirl.create(:user, power_ranking: rand(100))
+        @matches = []
+        1.times do
+          @matches.push FactoryGirl.create(:match, challenger: @user, defender: FactoryGirl.create(:user, power_ranking: rand(100)))
+        end
+        error = 0
+        @matches.each do |match|
+          error += (@user.power_ranking - match.defender.power_ranking) - (match.challenger_score - match.defender_score)
+        end
+        @user.error.should == error
+        end
+
+      it "should calculate error correctly for one defender" do
+        @user = FactoryGirl.create(:user, power_ranking: rand(100))
+        @matches = []
+        1.times do
+          @matches.push FactoryGirl.create(:match, defender: @user, challenger: FactoryGirl.create(:user, power_ranking: rand(100)))
+        end
+        error = 0
+        @matches.each do |match|
+          error += (@user.power_ranking - match.challenger.power_ranking) - (match.defender_score - match.challenger_score)
+        end
+        @user.error.should == error
+      end
+    end
+
+    describe "update power_ranking" do
+      it "should calculate the correct power ranking for a given error" do
+        @pr = rand 100
+        @error = 50 - rand(100)
+        @user = FactoryGirl.build(:user, power_ranking: @pr)
+        @user.update_power_ranking(@error).should == @pr + (@error * 0.8)
+      end
+    end
+  end
 end

@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   attr_accessor :password
-  attr_accessible :email, :name, :password, :password_confirmation
+  attr_accessible :email, :name, :password, :password_confirmation, :power_ranking
   
   has_many :defender_matches,   class_name: 'Match', foreign_key: :defender_id,   dependent: :destroy
   has_many :challenger_matches, class_name: 'Match', foreign_key: :challenger_id, dependent: :destroy
@@ -46,6 +46,48 @@ class User < ActiveRecord::Base
       if (c = count) != 0
         find(:first, offset: rand(c))
       end
+    end
+
+    def self.re_rank
+      # Give newcomers a new rank
+      User.all.each { |user| user.update_attribute(:power_ranking, 50) if user.power_ranking.nil? }
+      #error = 1
+      #until error == 0
+      #  error = 0
+      #  new_score = {}
+      #  User.all.each do |user|
+      #    u_error = user.error
+      #    new_score[user] = user.update_power_ranking u_error
+      #    error += u_error
+      #  end
+      #  User.all.each do |user|
+      #    user.update_attribute :power_ranking, new_score[user]
+      #  end
+      #end
+    end
+
+    def update_power_ranking(error)
+      return self.power_ranking + (error * 0.8)
+    end
+
+    def error
+      self.matches.inject(0) {|error, match| error + error_for_match(match)}
+    end
+
+    def error_for_match(match)
+      if (self == match.defender)
+        p1 = match.defender.power_ranking
+        p2 = match.challenger.power_ranking
+        s1 = match.defender_score
+        s2 = match.challenger_score
+      else
+        p1 = match.challenger.power_ranking
+        p2 = match.defender.power_ranking
+        s1 = match.challenger_score
+        s2 = match.defender_score
+      end
+
+      return (p1 - p2) - (s1 - s2)
     end
   
   private
