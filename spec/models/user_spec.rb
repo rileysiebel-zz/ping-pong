@@ -215,22 +215,18 @@ describe User do
   end
 
   describe "power rankings" do
-    before(:each) do
-      @user = User.create!(@attr)
-    end
-
     it "should have power_ranking attribute" do
+      @user = User.create!(@attr)
       @user.should respond_to(:power_ranking  )
     end
 
     describe "setup" do
-
-      it "players with no score should get a power ranking of 50" do
+      it "players with no score should get a power ranking of 100" do
         @users = []
         10.times { @users.push FactoryGirl.create(:user, power_ranking: nil) }
         User.re_rank
         @users.each do |user|
-          User.find(user).power_ranking.should == 50
+          User.find(user).power_ranking.should == 100
         end
       end
 
@@ -292,7 +288,34 @@ describe User do
         @pr = rand 100
         @error = 50 - rand(100)
         @user = FactoryGirl.build(:user, power_ranking: @pr)
-        @user.update_power_ranking(@error).should == @pr + (@error * 0.8)
+        @user.update_power_ranking(@error).should == @pr + (@error * 0.4)
+      end
+
+      it "should have total error of 0 after reranking everyone" do
+        @user = FactoryGirl.create(:user, power_ranking: rand(100))
+        @user2 = FactoryGirl.create(:user, power_ranking: rand(100))
+        c_score, d_score = Match.generate_valid_score
+        FactoryGirl.create(:match, challenger_id: @user, defender_id: @user2,
+                           challenger_score: c_score, defender_score: d_score)
+        User.re_rank
+        @user.error.should == 0
+        @user2.error.should == 0
+      end
+
+      it "should choose power rankings that predict the score" do
+        @user = FactoryGirl.create(:user)
+        @user2 = FactoryGirl.create(:user, power_ranking: 100)
+        FactoryGirl.create(:match, challenger_id: @user, defender_id: @user2,
+                           challenger_score: 21, defender_score: 18)
+        FactoryGirl.create(:match, challenger_id: @user, defender_id: @user2,
+                           challenger_score: 21, defender_score: 17)
+        FactoryGirl.create(:match, challenger_id: @user, defender_id: @user2,
+                           challenger_score: 23, defender_score: 21)
+        @user.error.should == -9
+        @user2.error.should == 9
+        User.re_rank
+        #@user.power_ranking.should == 104.5
+        #@user2.power_ranking.should == 95.5
       end
     end
   end

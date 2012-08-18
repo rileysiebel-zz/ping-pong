@@ -18,6 +18,8 @@ class User < ActiveRecord::Base
                         :length       => { :within => 6...40 }
                         
   before_save :encrypt_password
+  after_initialize :init
+
   public
     def matches
       #@matches = defender_matches + challenger_matches
@@ -49,25 +51,28 @@ class User < ActiveRecord::Base
     end
 
     def self.re_rank
-      # Give newcomers a new rank
-      User.all.each { |user| user.update_attribute(:power_ranking, 50) if user.power_ranking.nil? }
-      #error = 1
-      #until error == 0
-      #  error = 0
-      #  new_score = {}
+      #i = 0;
+      #begin
+      #  printf("%d\n", i);
+      #  i += 1
+      #  errors = {}, rerun = false
       #  User.all.each do |user|
-      #    u_error = user.error
-      #    new_score[user] = user.update_power_ranking u_error
-      #    error += u_error
+      #    printf("%s:%d\n", user.name, user.error)
+      #    error =  user.error
+      #    rerun = true if error != 0
+      #    errors[user.id] = error
       #  end
-      #  User.all.each do |user|
-      #    user.update_attribute :power_ranking, new_score[user]
+      #
+      #  unless (rerun == false)
+      #    User.all.each do |user|
+      #      user.power_ranking = user.update_power_ranking(errors[user.id])
+      #    end
       #  end
-      #end
+      #end until rerun == false
     end
 
     def update_power_ranking(error)
-      return self.power_ranking + (error * 0.8)
+      return self.power_ranking + (error * 0.4)
     end
 
     def error
@@ -97,5 +102,9 @@ class User < ActiveRecord::Base
     
     def encrypt(string)
       string #TODO finish implementing
+    end
+
+    def init
+      self.power_ranking ||= 100
     end
 end

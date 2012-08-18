@@ -1,4 +1,3 @@
-source 'http://rubygems.org'
 
 gem 'rails'
 
@@ -25,8 +24,9 @@ group :test do
   gem "simplecov"
   gem "webrat"
   gem 'factory_girl_rails'
-  gem 'spork'
-  gem 'autotest'
-  gem 'autotest-growl'
-  gem 'autotest-fsevent'
+  gem "spork"
+  gem "autotest"
+  gem "autotest-growl"
+  gem "autotest-fsevent"
+  gem "debugger"
 end
