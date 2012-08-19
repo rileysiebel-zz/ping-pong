@@ -192,7 +192,6 @@ describe User do
       [@match1, @match2].each do |match|
         Match.find_by_id(match.id).should be_nil
       end
-    
     end
     
     describe "recent games" do
@@ -215,107 +214,61 @@ describe User do
   end
 
   describe "power rankings" do
-    it "should have power_ranking attribute" do
-      @user = User.create!(@attr)
-      @user.should respond_to(:power_ranking  )
+    before(:each) do
+      @user1 = FactoryGirl.create(:user)
+      @user2 = FactoryGirl.create(:user)
+      @match1 = FactoryGirl.create(:match, challenger: @user1, defender: @user2,
+                                   challenger_score: 21, defender_score: 18)
+      @match2 = FactoryGirl.create(:match, challenger: @user1, defender: @user2,
+                                   challenger_score: 21, defender_score: 17)
+      @match3 = FactoryGirl.create(:match, challenger: @user1, defender: @user2,
+                                   challenger_score: 23, defender_score: 21)
     end
 
-    describe "setup" do
-      it "players with no score should get a power ranking of 100" do
-        @users = []
-        10.times { @users.push FactoryGirl.create(:user, power_ranking: nil) }
-        User.re_rank
-        @users.each do |user|
-          User.find(user).power_ranking.should == 100
-        end
-      end
+    it "should have power_ranking attribute" do
+      @user1.should respond_to(:power_ranking)
+    end
 
-      it "players with a score should not change their power ranking" do
-        @default_ranking = 100
-        @users = []
-        10.times do
-          @users.push FactoryGirl.create(:user, power_ranking: @default_ranking)
-        end
-        User.re_rank
-        @users.each do |user|
-          User.find(user).power_ranking.should == @default_ranking
-        end
-      end
+    it "should start with a power ranking of 100" do
+      @user1.power_ranking.should == 100
+      @user2.power_ranking.should == 100
     end
 
     describe "error calculation" do
+
       it "should calculate error correctly for one match" do
-        @p1 = rand(100)
-        @p2 = rand(100)
-        @score1, @score2= Match.generate_valid_score
-        @user_one = FactoryGirl.create(:user, power_ranking: @p1)
-        @user_two = FactoryGirl.create(:user, power_ranking: @p2)
-        @match = Match.create(defender: @user_one, challenger: @user_two,
-                              defender_score: @score1, challenger_score: @score2)
-        @user_one.error_for_match(@match).should == (@p1 - @p2) - (@score1 - @score2)
-        @user_two.error_for_match(@match).should == (@p2 - @p1) - (@score2 - @score1)
+        @user1.error_for_match(@match1).should == -3
+        @user1.error_for_match(@match2).should == -4
+        @user1.error_for_match(@match3).should == -2
+        @user2.error_for_match(@match1).should == 3
+        @user2.error_for_match(@match2).should == 4
+        @user2.error_for_match(@match3).should == 2
       end
 
-      it "should calculate error correctly for one challenger" do
-        @user = FactoryGirl.create(:user, power_ranking: rand(100))
-        @matches = []
-        1.times do
-          @matches.push FactoryGirl.create(:match, challenger: @user, defender: FactoryGirl.create(:user, power_ranking: rand(100)))
-        end
-        error = 0
-        @matches.each do |match|
-          error += (@user.power_ranking - match.defender.power_ranking) - (match.challenger_score - match.defender_score)
-        end
-        @user.error.should == error
-        end
-
-      it "should calculate error correctly for one defender" do
-        @user = FactoryGirl.create(:user, power_ranking: rand(100))
-        @matches = []
-        1.times do
-          @matches.push FactoryGirl.create(:match, defender: @user, challenger: FactoryGirl.create(:user, power_ranking: rand(100)))
-        end
-        error = 0
-        @matches.each do |match|
-          error += (@user.power_ranking - match.challenger.power_ranking) - (match.defender_score - match.challenger_score)
-        end
-        @user.error.should == error
+      it "should calculate error correctly" do
+        @user1.error.should == -9
+        @user2.error.should == 9
       end
     end
 
     describe "update power_ranking" do
+      # pr - error / (#games * 2)
       it "should calculate the correct power ranking for a given error" do
-        @pr = rand 100
-        @error = 50 - rand(100)
-        @user = FactoryGirl.build(:user, power_ranking: @pr)
-        @user.update_power_ranking(@error).should == @pr + (@error * 0.4)
+        @user1.update_power_ranking(30)
+        @user1.reload
+        @user1.power_ranking.should == 95
       end
 
       it "should have total error of 0 after reranking everyone" do
-        @user = FactoryGirl.create(:user, power_ranking: rand(100))
-        @user2 = FactoryGirl.create(:user, power_ranking: rand(100))
-        c_score, d_score = Match.generate_valid_score
-        FactoryGirl.create(:match, challenger_id: @user, defender_id: @user2,
-                           challenger_score: c_score, defender_score: d_score)
         User.re_rank
-        @user.error.should == 0
+        @user1.error.should == 0
         @user2.error.should == 0
       end
 
       it "should choose power rankings that predict the score" do
-        @user = FactoryGirl.create(:user)
-        @user2 = FactoryGirl.create(:user, power_ranking: 100)
-        FactoryGirl.create(:match, challenger_id: @user, defender_id: @user2,
-                           challenger_score: 21, defender_score: 18)
-        FactoryGirl.create(:match, challenger_id: @user, defender_id: @user2,
-                           challenger_score: 21, defender_score: 17)
-        FactoryGirl.create(:match, challenger_id: @user, defender_id: @user2,
-                           challenger_score: 23, defender_score: 21)
-        @user.error.should == -9
-        @user2.error.should == 9
         User.re_rank
-        #@user.power_ranking.should == 104.5
-        #@user2.power_ranking.should == 95.5
+        @user1.reload.power_ranking.should == 101.5
+        @user2.reload.power_ranking.should == 98.5
       end
     end
   end

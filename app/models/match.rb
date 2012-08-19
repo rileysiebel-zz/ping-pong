@@ -14,12 +14,6 @@ class Match < ActiveRecord::Base
 
   default_scope order: 'matches.created_at DESC'
 
-  after_save :re_rank
-
-  def re_rank
-    User.re_rank
-  end
-
   def reached_minimum_score
     def add_error
       errors.add(:base, "Invalid Score: {#{challenger_score} : #{defender_score}}")

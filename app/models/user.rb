@@ -51,32 +51,26 @@ class User < ActiveRecord::Base
     end
 
     def self.re_rank
-      #i = 0;
-      #begin
-      #  printf("%d\n", i);
-      #  i += 1
-      #  errors = {}, rerun = false
-      #  User.all.each do |user|
-      #    printf("%s:%d\n", user.name, user.error)
-      #    error =  user.error
-      #    rerun = true if error != 0
-      #    errors[user.id] = error
-      #  end
-      #
-      #  unless (rerun == false)
-      #    User.all.each do |user|
-      #      user.power_ranking = user.update_power_ranking(errors[user.id])
-      #    end
-      #  end
-      #end until rerun == false
+      errors = Hash.new
+      while true
+        User.all.each { |user| errors[user] = user.error }
+        if errors.values.all? { |error| error == 0 }
+          break
+        else
+          User.all.each { |user| user.update_power_ranking(errors[user]) }
+        end
+      end
     end
 
     def update_power_ranking(error)
-      return self.power_ranking + (error * 0.4)
+      # pr - error / (game_count * 2)
+      self.update_attribute(:power_ranking, self.power_ranking - (error / (self.matches.count * 2)))
     end
 
     def error
-      self.matches.inject(0) {|error, match| error + error_for_match(match)}
+      self.matches.inject(0) {|error, match|
+        error + error_for_match(match)
+      }
     end
 
     def error_for_match(match)
