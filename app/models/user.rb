@@ -53,20 +53,23 @@ class User < ActiveRecord::Base
     def self.re_rank
       errors = Hash.new
       while true
-        User.all.each { |user| errors[user] = user.error }
+        User.all.select { |user| user.matches.count > 0 }.each { |user| errors[user] = user.error }
         if errors.values.all? { |error| error == 0 }
           break
         else
-          User.all.each { |user| user.update_power_ranking(errors[user]) }
+          User.all.select { |user| user.matches.count > 0 }.each { |user| user.update_power_ranking(errors[user]) }
         end
       end
     end
 
-    def update_power_ranking(error)
+  def self.all_with_matches
+    User.all.s
+  end
+
+  def update_power_ranking(error)
       # pr - error / (game_count * 2)
       self.update_attribute(:power_ranking, self.power_ranking - (error / (self.matches.count * 2)))
     end
-
     def error
       self.matches.inject(0) {|error, match|
         error + error_for_match(match)

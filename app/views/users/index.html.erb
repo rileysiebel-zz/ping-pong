@@ -2,8 +2,15 @@
 	
 <%= will_paginate %>
 
-<ul class="users">
+
+<table class="users">
+    <tr class="header">
+        <td class="rank">Rank</td>
+        <td class="name">Player</td>
+        <td class="power_ranking">Power Ranking</td>
+        <td class="w_l">Win-Loss</td>
+    </tr>
 	<%= render @users %>
-</ul>
+</table>
 
 <%= will_paginate %>

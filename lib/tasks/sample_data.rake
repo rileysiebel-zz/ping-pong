@@ -17,6 +17,7 @@ namespace :db do
                     password: password, password_confirmation: password})
     end
     User.all(limit: 6).each do |user|
+      #TODO fix random
       25.times do
         c_score, d_score = Match.generate_valid_score
         challenger = User.random
@@ -25,7 +26,6 @@ namespace :db do
       end
       25.times do
         c_score, d_score = Match.generate_valid_score
-
         defender = User.random
         user.challenger_matches.create!({ defender: defender, 
           defender_score: d_score, challenger_score: c_score })

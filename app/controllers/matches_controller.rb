@@ -1,6 +1,10 @@
 class MatchesController < ApplicationController
   before_filter :authenticate, only: [:create, :destroy]
 
+  def re_rank
+    User.re_rank
+  end
+
   def create
     @match = current_user.defender_matches.build(params[:match])
     if @match.save

@@ -1,8 +1,11 @@
-<li>
-	<%= gravatar_for user, size: 30 %>
-	<%= link_to user.name, user %>
-	<% if current_user.admin? %>
-		| <%= link_to "delete", user, method: :delete, confirm: "You Sure?",
-																	title: "Delete #{user.name}" %>
-	<% end %>
-</li>
+<tr>
+    <td class="rank"><%= user_counter %></td>
+    <td class="name"><%= gravatar_for user, size: 30 %><%= link_to user.name, user %></td>
+    <td class="power_ranking"><%= user.power_ranking.to_s %></td>
+    <td class='admin'>
+        <% if current_user.admin? %>
+          | <%= link_to "delete", user, method: :delete, confirm: "You Sure?",
+                        title: "Delete #{user.name}" %>
+        <% end %>
+    </td>
+</tr>

@@ -2,75 +2,118 @@ require 'spec_helper'
 
 describe UsersController do
   render_views
-  
+
   describe "GET 'index'" do
-    
+
     describe "for non-signed-in users" do
-      
+
       it "should deny access" do
         get :index
         response.should redirect_to(signin_path)
         flash[:notice].should =~ /sign in/i
       end
-      
+
     end
-    
+
     describe "for signed-in-users" do
-      
+
       before(:each) do
         @user = test_sign_in(FactoryGirl.create(:user))
         second = FactoryGirl.create(:user, email: "another@example.com")
         third = FactoryGirl.create(:user, email: "another@example.net")
-        
+
         @users = [@user, second, third]
         30.times do
-          @users << FactoryGirl.create(:user, 
-                      email: FactoryGirl.generate(:email))
+          @users << FactoryGirl.create(:user,
+                                       email: FactoryGirl.generate(:email))
         end
       end
-      
+
       it "should be successful" do
         get :index
         response.should be_success
       end
-      
+
       it "should have the right title" do
         get :index
         response.should have_selector('title', content: "All users")
       end
-      
-      it "should have an element for each user" do
-        get :index
-        @users[0..2].each do |user|
-          response.should have_selector("li", content: user.name)
+
+      describe "table" do
+        it "should exist" do
+          get :index
+          response.should have_selector("table.users")
+        end
+        describe "header" do
+          it "should exist" do
+            get :index
+            response.should have_selector("table tr.header")
+          end
+          it "should have a rank column" do
+            get :index
+            response.should have_selector("table tr.header td.rank", content: "Rank")
+          end
+          it "should have a player column" do
+            get :index
+            response.should have_selector("table tr.header td.name", content: "Player")
+          end
+          it "should have a power ranking column" do
+            get :index
+            response.should have_selector("table tr.header td.power_ranking", content: "Power Ranking")
+          end
+          it "should have a win-loss column" do
+            get :index
+            response.should have_selector("table tr.header td.w_l", content: "Win-Loss")
+          end
+        end
+
+        it "should have an element for each user" do
+          get :index
+          @users[0..2].each do |user|
+            response.should have_selector("table tr td.name", content: user.name)
+          end
+        end
+
+        it "should show the rank of each user" do
+          get :index
+          @users[0..2].each_with_index do |user, i|
+            response.should have_selector("table tr td.rank", content: i.to_s)
+          end
+        end
+
+        it "should show the power_ranking of each user" do
+          get :index
+          @users[0..2].each do |user|
+            response.should have_selector("table tr td.power_ranking", content: user.power_ranking.to_s)
+          end
         end
       end
-      
+
       it "should paginate users" do
         get :index
         response.should have_selector "div.pagination"
         response.should have_selector "span.disabled", content: "Previous"
         response.should have_selector "a", href: "/users?page=2",
-                                          content: "2"
+                                      content: "2"
         response.should have_selector "a", href: "/users?page=2",
-                                          content: "Next"
+                                      content: "Next"
       end
 
     end
-  
+
   end
-  
+
   describe "GET 'show'" do
-  
+
     before(:each) do
       @user = FactoryGirl.create(:user)
     end
-    
+
     it "should be successful" do
       get :show, :id => @user
       response.should be_success
     end
-    
+
     it "should find the right user" do
       get :show, :id => @user
       assigns(:user).should == @user
@@ -79,284 +122,284 @@ describe UsersController do
     it "should have the right title" do
       get :show, :id => @user
       response.should have_selector("title", :content => @user.name)
-    end 
-    
+    end
+
     it "shuld inclue the user's name" do
       get :show, :id => @user
       response.should have_selector("h1", :content => @user.name)
     end
-    
+
     it "should have a profile image" do
       get :show, :id => @user
       response.should have_selector("h1>img", :class => "gravatar")
     end
-  
+
     it "should show the user's matches" do
       @user2 = FactoryGirl.create(:user)
       match1 = FactoryGirl.create(:match, defender: @user, challenger: @user2)
       get :show, id: @user
-      response.should have_selector("span.content", 
-        content: "#{@user.name} #{match1.defender_score} - #{match1.challenger_score} #{@user2.name}")
+      response.should have_selector("span.content",
+                                    content: "#{@user.name} #{match1.defender_score} - #{match1.challenger_score} #{@user2.name}")
     end
-  
+
   end
-  
+
   describe "GET 'new'" do
-    
+
     it "should be successful" do
       get :new
       response.should be_success
     end
-    
+
     it "should have the right title" do
       get :new
       response.should have_selector('title', :content => "Sign up")
     end
-  
+
     it "should have a name field" do
       get :new
       response.should have_selector("input[name='user[name]'][type='text']")
     end
-  
+
     it "should have an email field" do
       get :new
-      response.should have_selector("input[name='user[email]'][type='text']") 
+      response.should have_selector("input[name='user[email]'][type='text']")
     end
-    
+
     it "should have a password field" do
       get :new
       response.should have_selector(
-        "input[name='user[password]'][type='password']") 
+                          "input[name='user[password]'][type='password']")
     end
-    
+
     it "should have a password confirmation field" do
-      get :new 
+      get :new
       response.should have_selector(
-        "input[name='user[password_confirmation]'][type='password']")   
+                          "input[name='user[password_confirmation]'][type='password']")
     end
-  
+
   end
 
   describe "POST 'create'" do
-    
+
     describe "failure" do
-  
+
       before(:each) do
         @attr = {
-          :name => "",
-          :email => "",
-          :password => "",
-          :password_confirmation => ""
+            :name => "",
+            :email => "",
+            :password => "",
+            :password_confirmation => ""
         }
       end
-  
+
       it "should not create a user" do
         lambda do
           post :create, :user => @attr
         end.should_not change(User, :count)
       end
-  
+
       it "should have the right title" do
         post :create, :user => @attr
-        response.should have_selector('title', :content =>"Sign up")
+        response.should have_selector('title', :content => "Sign up")
       end
-  
+
       it "should render the 'new' page" do
         post :create, :user => @attr
         response.should render_template('new')
       end
-      
+
     end
-  
+
     describe "success" do
-    
+
       before(:each) do
-        @attr = { :name => "New User", :email => "user@example.com",
-                  :password => "foobar", :password_confirmation => "foobar" }
+        @attr = {:name => "New User", :email => "user@example.com",
+                 :password => "foobar", :password_confirmation => "foobar"}
       end
-  
+
       it "should create a user" do
         lambda do
           post :create, :user => @attr
         end.should change(User, :count).by(1)
       end
-      
+
       it "should sign the user in" do
         post :create, user: @attr
         controller.should be_signed_in
       end
-      
+
       it "should redirect to the user show page" do
         post :create, :user => @attr
         response.should redirect_to(user_path(assigns(:user)))
       end
-      
+
       it "should have a welcome message" do
         post :create, :user => @attr
         flash[:success].should =~ /welcome to the sample app/i
       end
-      
+
     end
-  
+
   end
 
   describe "GET 'edit'" do
-    
+
     before(:each) do
       @user = FactoryGirl.create(:user)
       test_sign_in(@user)
     end
-    
+
     it "should be successful" do
       get :edit, id: @user
       response.should be_success
     end
-    
+
     it "should have the right title" do
       get :edit, id: @user
       response.should have_selector("title", content: "Edit user")
     end
-    
+
     it "should have a link to change the Gravatar" do
       get :edit, id: @user
       gravatar_url = "http://gravatar.com/emails"
       response.should have_selector("a", href: gravatar_url,
-                                         content: "change")
+                                    content: "change")
     end
   end
 
   describe "PUT 'update'" do
-    
+
     before(:each) do
       @user = FactoryGirl.create(:user)
       test_sign_in(@user)
     end
-    
+
     describe "failure" do
-      
+
       before(:each) do
-        @attr = { email: "", name: "", password: "", password_confirmation: "" }
+        @attr = {email: "", name: "", password: "", password_confirmation: ""}
       end
-      
+
       it "should render the 'edit' page" do
         put :update, id: @user, user: @attr
         response.should render_template('edit')
       end
-      
+
       it "should have the right title" do
         put :update, id: @user, user: @attr
         response.should have_selector('title', content: "Edit user")
       end
     end
-    
+
     describe "success" do
-    
+
       before(:each) do
-        @attr = { name: "New Name", email: "user@example.com", 
-                  password: "barbaz", password_confirmation: "barbaz" }
+        @attr = {name: "New Name", email: "user@example.com",
+                 password: "barbaz", password_confirmation: "barbaz"}
       end
 
       it "should change the user's attributes" do
         put :update, id: @user, user: @attr
         @user.reload
-        @user.name.should  == @attr[:name]
+        @user.name.should == @attr[:name]
         @user.email.should == @attr[:email]
       end
-      
+
       it "should redirect to the user show page" do
         put :update, id: @user, user: @attr
         response.should redirect_to(user_path(@user))
       end
-      
+
       it "should have a flash message" do
         put :update, id: @user, user: @attr
         flash[:success].should =~ /updated/
       end
-      
+
     end
-    
+
   end
 
   describe "authentication of edit/update pages" do
-    
+
     before(:each) do
       @user = FactoryGirl.create(:user)
     end
-    
+
     describe "for not-signed-in users" do
-      
+
       it "should deny access to 'edit'" do
         get :edit, id: @user
         response.should redirect_to(signin_path)
       end
-      
+
       it "should deny access to 'update'" do
         put :update, id: @user, user: {}
         response.should redirect_to(signin_path)
       end
-      
+
     end
-    
+
     describe "for signed-in users" do
-       
+
       before(:each) do
         wrong_user = FactoryGirl.create(:user, email: "user@wrongemail.net")
         test_sign_in(wrong_user)
       end
-      
+
       it "should require matching users for 'edit'" do
         get :edit, id: @user
         response.should redirect_to(root_path)
       end
-      
+
       it "should require matching users for 'update'" do
         put :update, id: @user, user: {}
         response.should redirect_to(root_path)
       end
-      
+
     end
-    
+
   end
 
   describe "DELETE 'destroy'" do
-    
+
     before(:each) do
       @user = FactoryGirl.create(:user)
     end
-    
+
     describe "as a non-signed-in user" do
 
       it "should deny access" do
         delete :destroy, id: @user
         response.should redirect_to signin_path
       end
-        
+
     end
 
     describe "as a non-admin user" do
-    
+
       it "should protect the page" do
         test_sign_in(@user)
         delete :destroy, id: @user
         response.should redirect_to root_path
-    
+
       end
     end
 
     describe "as an admin user" do
-      
+
       before(:each) do
-        admin = FactoryGirl.create(:user, email: "admin@example.com", 
-                                          admin: true)
+        admin = FactoryGirl.create(:user, email: "admin@example.com",
+                                   admin: true)
         test_sign_in(admin)
-      end                                          
-      
+      end
+
       it "should destroy the user" do
         lambda do
           delete :destroy, id: @user
         end.should change(User, :count).by(-1)
       end
-      
+
       it "should redirect to the users page" do
         delete :destroy, id: @user
         response.should redirect_to(users_path)
