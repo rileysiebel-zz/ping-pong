@@ -5,7 +5,8 @@ gem 'rails'
 gem 'pg'
 gem 'sqlite3', group: :development
 gem 'gravatar_image_tag'
-gem 'will_paginate'	
+gem 'will_paginate'
+gem "faker"
 
 group :development do
   gem "rspec-rails"
@@ -13,7 +14,6 @@ group :development do
   gem "rspec-core"
   gem "rspec-expectations"
   gem "annotate"
-  gem "faker"
   gem "pow"
   gem "powify"
 end
