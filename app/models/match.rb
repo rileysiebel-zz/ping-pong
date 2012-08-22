@@ -13,7 +13,7 @@ class Match < ActiveRecord::Base
   validate  :reached_minimum_score
 
   default_scope order: 'matches.created_at DESC'
-  after_save :re_rank
+  #after_save :re_rank
 
   def re_rank
     User.re_rank
