@@ -3,7 +3,9 @@ gem 'rails'
 
 gem 'sqlite3'
 gem 'gravatar_image_tag'
-gem 'will_paginate'	
+gem 'will_paginate'
+gem 'pg'
+gem 'heroku'
 
 group :development do
   gem "rspec-rails"
