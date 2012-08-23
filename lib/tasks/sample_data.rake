@@ -3,6 +3,7 @@ require 'faker'
 namespace :db do
   desc "Fill database with sample data"
   task populate: :environment do
+    Match.skip_callback(:after_save)
     Rake::Task['db:reset'].invoke
     admin = User.create!({name:                  "Example User",       
                           email:                 "example@pingpong.org",
@@ -31,5 +32,6 @@ namespace :db do
           defender_score: d_score, challenger_score: c_score })
       end
     end
+    #Match.set_callback(:after_save)
   end
 end

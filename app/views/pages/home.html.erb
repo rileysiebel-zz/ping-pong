@@ -1,21 +1,21 @@
 <% if signed_in? %>
-	<table class='front' summary='For signed-in users'>
-		<tr>
-			<td class='main'> 
-				<h1 class='match'>Enter a Match</h1>
-				<%= render 'shared/match_form' %>
-				<%= render 'shared/feed' %>
-			</td>
-			<td class='sidebar round'>
-				<%= render 'shared/user_info'%>
-			</td>
-		</tr>
-	</table>
+    <table class='front' summary='For signed-in users'>
+        <tr>
+            <td class='main'>
+                <h1 class='match'>Enter a Match</h1>
+                <%= render 'shared/match_form' %>
+                <%= render 'shared/feed' %>
+            </td>
+            <td class='sidebar round'>
+                <%= render 'shared/user_info' %>
+            </td>
+        </tr>
+    </table>
 <% else %>
-	<h1>Ping Pong</h1>
-	<p>
-		This is the homepage for the C3 Ping Pong Application
-	</p>
+    <h1>Ping Pong</h1>
+    <p>
+        This is the homepage for the C3 Ping Pong Application
+    </p>
 
-	<%= link_to "Sign up now!", '#', :class => "signup_button round" %>
+    <%= link_to "Sign up now!", '#', :class => "signup_button round" %>
 <% end %>
