@@ -34,10 +34,19 @@ group :test do
   gem "simplecov"
   gem "webrat"
   gem 'factory_girl_rails'
-  gem "spork"
+  gem "spork-rails"
   gem "autotest"
   gem "autotest-growl"
   gem "autotest-fsevent"
   gem "debugger"
   gem "simplecov"
+  gem 'cucumber-rails', require: false
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem "guard"
+  gem "guard-bundler"
+  gem "guard-spork"
+  gem "guard-rspec"
+  gem "guard-cucumber"
+  gem "growl"
 end
