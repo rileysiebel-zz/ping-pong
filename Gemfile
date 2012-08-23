@@ -6,7 +6,7 @@ gem 'pg'
 gem 'sqlite3', group: :development
 gem 'gravatar_image_tag'
 gem 'will_paginate'
-gem "faker"
+gem 'jquery-rails'
 
 group :development do
   gem "rspec-rails"
