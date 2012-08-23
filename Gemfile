@@ -9,6 +9,13 @@ gem 'will_paginate'
 gem 'jquery-rails'
 gem 'faker'
 
+group :assets do
+  gem 'therubyracer'
+  gem 'sass-rails'
+  gem 'coffee-rails'
+  gem 'uglifier'
+end
+
 group :development do
   gem "rspec-rails"
   gem "rspec"
