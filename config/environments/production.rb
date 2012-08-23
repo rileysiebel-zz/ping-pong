@@ -20,6 +20,9 @@ Investor::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
+  # Add blueprint
+  config.assets.precompile += %w( blueprint/screen.css blueprint/print.css blueprint/ie.css)
+
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH
 
