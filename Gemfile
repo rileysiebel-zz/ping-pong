@@ -1,13 +1,11 @@
 source 'https://rubygems.org'
 
 gem 'rails'
-
-gem 'pg'
-gem 'sqlite3', group: :development
 gem 'gravatar_image_tag'
 gem 'will_paginate'
 gem 'jquery-rails'
 gem 'faker'
+gem 'activerecord-postgresql-adapter'
 
 group :assets do
   gem 'therubyracer'

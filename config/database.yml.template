@@ -1,0 +1,20 @@
+poduction:
+  adapter: postgresql
+  encoding: utf8
+  database: pingpong_prod
+  username: riley
+  password: 1ukyD0wg
+
+development:
+  adapter: postgresql
+  encoding: utf8
+  database: pingpong_dev
+  username: riley
+  password: 1ukyD0wg
+
+test:
+  adapter: postgresql
+  encoding: utf8
+  database: pingpong_test
+  username: riley
+  password: 1ukyD0wg
