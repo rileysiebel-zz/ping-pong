@@ -86,7 +86,7 @@ GEM
       railties (>= 3.0.0)
     faker (1.0.1)
       i18n (~> 0.4)
-    ffi (1.1.5)
+    ffi (1.11.1)
     gherkin (2.11.2)
       json (>= 1.4.6)
     gravatar_image_tag (1.1.3)
